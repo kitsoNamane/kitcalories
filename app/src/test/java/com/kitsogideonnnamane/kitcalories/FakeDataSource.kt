@@ -10,6 +10,10 @@ class FakeDataSource : RecipeDataSource {
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteRecipes(recipe: Recipe) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun favouriteRecipe(recipe: Recipe) {
         TODO("Not yet implemented")
     }

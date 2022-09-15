@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface RecipeDataSource {
     suspend fun saveRecipes(recipes: List<Recipe>)
 
+    suspend fun deleteRecipes(recipe: Recipe)
+
     suspend fun favouriteRecipe(recipe: Recipe)
 
     suspend fun unFavouriteRecipes(recipe: Recipe)

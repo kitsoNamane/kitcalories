@@ -1,0 +1,7 @@
+[
+  {
+    "errorCode": "not_found",
+    "message": "Could not find a recipe with the specified ID",
+    "params": []
+  }
+]

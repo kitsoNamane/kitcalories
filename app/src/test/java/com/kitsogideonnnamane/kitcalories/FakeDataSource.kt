@@ -1,6 +1,6 @@
 package com.kitsogideonnnamane.kitcalories
 
-import com.kitsogideonnnamane.kitcalories.data.Recipe
+import com.kitsogideonnnamane.kitcalories.data.source.Recipe
 import com.kitsogideonnnamane.kitcalories.data.Result
 import com.kitsogideonnnamane.kitcalories.data.source.RecipeDataSource
 import kotlinx.coroutines.flow.Flow

@@ -13,4 +13,5 @@ ext {
     truthVersion = '1.1.3'
     coroutinesVersion = '1.6.4'
     okHttpVersion = '4.10.0'
+    moshiVersion = '1.14.0'
 }

@@ -3,13 +3,11 @@ package com.kitsogideonnnamane.kitcalories.data.source
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-
 @JsonClass(generateAdapter = true)
 data class Self(
     val href: String,
     val title: String
 )
-
 
 @JsonClass(generateAdapter = true)
 data class LinksX(
@@ -18,7 +16,7 @@ data class LinksX(
 
 @JsonClass(generateAdapter = true)
 data class Links(
-    val self: Self
+    val self: Self?
 )
 
 @JsonClass(generateAdapter = true)
@@ -182,7 +180,6 @@ data class NutrientInfo(
     val unit: String
 )
 
-
 @JsonClass(generateAdapter = true)
 data class RecipeSearchResult(
     val _links: LinksX,
@@ -194,6 +191,6 @@ data class RecipeSearchResult(
 
 @JsonClass(generateAdapter = true)
 data class RecipeResult(
-    val _links: Links,
-    val recipe: Recipe
+    val recipe: Recipe,
+    val _links: Links
 )

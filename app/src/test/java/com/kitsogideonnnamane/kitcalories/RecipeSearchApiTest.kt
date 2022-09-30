@@ -15,14 +15,13 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-import java.io.IOException
 
 class RecipeSearchApiTest {
     private lateinit var recipeSearchApi: RecipeSearchApi
     private lateinit var mockWebServer: MockWebServer
 
     private fun readMockJsonResponse(fileName: String): String {
-        val resource = javaClass.classLoader?.getResource("success_search_response.json")
+        val resource = javaClass.classLoader?.getResource(fileName)
         val file = File(resource?.path!!)
         return file.readText(Charsets.UTF_8)
     }
@@ -35,9 +34,11 @@ class RecipeSearchApiTest {
                 if (request.path?.contains("/search")!!) {
                     return MockResponse().setBody(readMockJsonResponse("success_search_response.json"))
                 } else if (request.path?.contains("/recipe")!!) {
+                    val response = readMockJsonResponse("success_recipe_response.json")
                     return MockResponse().setBody(readMockJsonResponse("success_recipe_response.json"))
                 }
-                return MockResponse().setResponseCode(404).setBody("fail_recipe_response.json")
+                return MockResponse().setResponseCode(404)
+                    .setBody(readMockJsonResponse("fail_recipe_response.json"))
             }
         }
         mockWebServer.dispatcher = dispatcher
@@ -47,7 +48,7 @@ class RecipeSearchApiTest {
 
     @Test
     fun testTestResources() {
-        val resource = javaClass.classLoader?.getResource("success_search_response.json")
+        val resource = javaClass.classLoader?.getResource("success_recipe_response.json")
         val file = File(resource?.path!!)
         assertThat(file.exists()).isTrue()
         assertThat(file.readLines().size).isGreaterThan(10)
@@ -66,9 +67,18 @@ class RecipeSearchApiTest {
 
     @ExperimentalCoroutinesApi
     @Test
+    fun get_a_recipe() = runTest {
+        val response = recipeSearchApi.getRecipe("fakeRecipeId")
+        response as Result.Success
+        assertThat(response.data.title).isEqualTo("Chicken Vesuvio")
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
     fun search_recipes() = runTest {
         val searchString = "rice"
         val response = recipeSearchApi.searchRecipes(searchString)
+        assertThat(response).isInstanceOf(Result.Success::class.java)
         response as Result.Success
 
         assertThat(response.data.size).isGreaterThan(0)
@@ -77,20 +87,22 @@ class RecipeSearchApiTest {
     @ExperimentalCoroutinesApi
     @Test
     fun nextPage_getSearchResultsNextPage() = runTest {
-        assertThat(recipeSearchApi.nextPage() is Result.Success).isTrue()
+        recipeSearchApi.searchRecipes("rice")
+        val response = recipeSearchApi.nextPage()
+        assertThat(response).isInstanceOf(Result.Success::class.java)
+        response as Result.Success
+        assertThat(response.data.size).isGreaterThan(0)
     }
 
     @ExperimentalCoroutinesApi
     @Test
     fun previousPage_getSearchResultsPreviousPage() = runTest {
-        assertThat(recipeSearchApi.previousPage() is Result.Success).isTrue()
+        recipeSearchApi.searchRecipes("rice")
+        val response = recipeSearchApi.nextPage()
+        response as Result.Success
+        assertThat(response.data.size).isGreaterThan(0)
     }
 
-    @ExperimentalCoroutinesApi
-    @Test
-    fun get_a_recipe() = runTest {
-        assertThat(recipeSearchApi.getRecipe("fakeRecipeId") is Result.Success).isTrue()
-    }
 
     @After
     fun tearDown() {

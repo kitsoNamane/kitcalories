@@ -16,6 +16,9 @@ class FakeRecipeSearchApi(private val httpClient: OkHttpClient) : RecipeSearchAp
     private val searchJsonAdapter = moshi.adapter(RecipeSearchResult::class.java)
     private val recipeJsonAdapter = moshi.adapter(RecipeResult::class.java)
 
+    private var nextPageUrl: String? = null
+    private var previousPageUrl: String? = null
+
     private fun toRecipeModel(recipe: Recipe): RecipeModel {
         val images = recipe.images
 
@@ -39,7 +42,7 @@ class FakeRecipeSearchApi(private val httpClient: OkHttpClient) : RecipeSearchAp
 
     override suspend fun searchRecipes(searchQuery: String): Result<List<RecipeModel>> {
         val request = Request.Builder()
-            .url("http://localhost:9090/search?q=searchQuery")
+            .url("http://localhost:9090/search?q=$searchQuery")
             .build()
 
         httpClient.newCall(request).execute().use { res ->
@@ -48,36 +51,65 @@ class FakeRecipeSearchApi(private val httpClient: OkHttpClient) : RecipeSearchAp
             val response = rawResponse?.hits?.map { hit ->
                 toRecipeModel(hit.recipe)
             }
+
+            previousPageUrl = request.url.toString()
+            nextPageUrl = rawResponse?._links?.next?.href
+
             return Result.Success(response!!)
         }
     }
 
     override suspend fun getRecipe(recipeId: String): Result<RecipeModel> {
-        return Result.Success(
-            RecipeModel(
-                title = "fake title",
-                description = "fake description",
-                ingredients = listOf("ingredient 1", "ingredient 2"),
-                isFavorite = false,
-                dietLabels = listOf("diet"),
-                thumbNailUrl = "thumbnailurl",
-                largeImageUrl = "largeimageurl",
-                regularImageUrl = "regularimageurl",
-                smallImageUrl = "smallimageurl",
-                healthLabels = listOf("diet"),
-                cautions = listOf("diet"),
-                mealType = listOf("diet"),
-                dishType = listOf("diet"),
-                cuisineType = listOf("diet"),
-            )
-        )
+        val request = Request.Builder()
+            .url("http://localhost:9090/recipe?q=$recipeId")
+            .build()
+
+        httpClient.newCall(request).execute().use { res ->
+            if (!res.isSuccessful) return Result.Error(IOException("Unexpected code $res"))
+            val rawResponse = recipeJsonAdapter.fromJson(res.body!!.source())
+            return Result.Success(toRecipeModel(rawResponse?.recipe!!))
+        }
     }
 
     override suspend fun nextPage(): Result<List<RecipeModel>> {
-        return Result.Success(listOf<RecipeModel>())
+        if (nextPageUrl.isNullOrBlank()) return Result.Error(Exception("No more results"))
+
+        val request = Request.Builder()
+            .url(nextPageUrl!!)
+            .build()
+
+        httpClient.newCall(request).execute().use { res ->
+            if (!res.isSuccessful) return Result.Error(IOException("Unexpected code $res"))
+            val rawResponse = searchJsonAdapter.fromJson(res.body!!.source())
+            val response = rawResponse?.hits?.map { hit ->
+                toRecipeModel(hit.recipe)
+            }
+
+            previousPageUrl = request.url.toString()
+            nextPageUrl = rawResponse?._links?.next?.href
+
+            return Result.Success(response!!)
+        }
     }
 
     override suspend fun previousPage(): Result<List<RecipeModel>> {
-        return Result.Success(listOf<RecipeModel>())
+        if (previousPageUrl.isNullOrBlank()) return Result.Error(Exception("No previous result"))
+
+        val request = Request.Builder()
+            .url(previousPageUrl!!)
+            .build()
+
+        httpClient.newCall(request).execute().use { res ->
+            if (!res.isSuccessful) return Result.Error(IOException("Unexpected code $res"))
+            val rawResponse = searchJsonAdapter.fromJson(res.body!!.source())
+            val response = rawResponse?.hits?.map { hit ->
+                toRecipeModel(hit.recipe)
+            }
+
+            previousPageUrl = request.url.toString()
+            nextPageUrl = rawResponse?._links?.next?.href
+
+            return Result.Success(response!!)
+        }
     }
 }

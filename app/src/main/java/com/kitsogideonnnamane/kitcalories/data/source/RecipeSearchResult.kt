@@ -10,6 +10,12 @@ data class Self(
     val title: String
 )
 
+
+@JsonClass(generateAdapter = true)
+data class LinksX(
+    val next: Self
+)
+
 @JsonClass(generateAdapter = true)
 data class Links(
     val self: Self
@@ -17,96 +23,96 @@ data class Links(
 
 @JsonClass(generateAdapter = true)
 data class Ingredient(
-    val food: String,
-    val foodCategory: String,
-    val foodId: String,
-    val image: String,
-    val measure: String,
-    val quantity: Double,
-    val text: String,
-    val weight: Double
+    val food: String?,
+    val foodCategory: String?,
+    val foodId: String?,
+    val image: String?,
+    val measure: String?,
+    val quantity: Double?,
+    val text: String?,
+    val weight: Double?
 )
 
 @JsonClass(generateAdapter = true)
 data class TotalDaily(
-    val CA: NutrientInfo,
-    val CHOCDF: NutrientInfo,
-    val CHOLE: NutrientInfo,
-    val ENERC_KCAL: NutrientInfo,
-    val FASAT: NutrientInfo,
-    val FAT: NutrientInfo,
-    val FE: NutrientInfo,
-    val FIBTG: NutrientInfo,
-    val FOLDFE: NutrientInfo,
-    val K: NutrientInfo,
-    val MG: NutrientInfo,
-    val NA: NutrientInfo,
-    val NIA: NutrientInfo,
-    val P: NutrientInfo,
-    val PROCNT: NutrientInfo,
-    val RIBF: NutrientInfo,
-    val THIA: NutrientInfo,
-    val TOCPHA: NutrientInfo,
-    val VITA_RAE: NutrientInfo,
-    val VITB12: NutrientInfo,
-    val VITB6A: NutrientInfo,
-    val VITC: NutrientInfo,
-    val VITD: NutrientInfo,
-    val VITK1: NutrientInfo,
-    val ZN: NutrientInfo
+    val CA: NutrientInfo?,
+    val CHOCDF: NutrientInfo?,
+    val CHOLE: NutrientInfo?,
+    val ENERC_KCAL: NutrientInfo?,
+    val FASAT: NutrientInfo?,
+    val FAT: NutrientInfo?,
+    val FE: NutrientInfo?,
+    val FIBTG: NutrientInfo?,
+    val FOLDFE: NutrientInfo?,
+    val K: NutrientInfo?,
+    val MG: NutrientInfo?,
+    val NA: NutrientInfo?,
+    val NIA: NutrientInfo?,
+    val P: NutrientInfo?,
+    val PROCNT: NutrientInfo?,
+    val RIBF: NutrientInfo?,
+    val THIA: NutrientInfo?,
+    val TOCPHA: NutrientInfo?,
+    val VITA_RAE: NutrientInfo?,
+    val VITB12: NutrientInfo?,
+    val VITB6A: NutrientInfo?,
+    val VITC: NutrientInfo?,
+    val VITD: NutrientInfo?,
+    val VITK1: NutrientInfo?,
+    val ZN: NutrientInfo?
 )
 
 @JsonClass(generateAdapter = true)
 data class TotalNutrients(
-    val CA: NutrientInfo,
-    val CHOCDF: NutrientInfo,
+    val CA: NutrientInfo?,
+    val CHOCDF: NutrientInfo?,
     @Json(name = "CHOCDF.net")
-    val NetCHOCDF: NutrientInfo,
-    val CHOLE: NutrientInfo,
-    val ENERC_KCAL: NutrientInfo,
-    val FAMS: NutrientInfo,
-    val FAPU: NutrientInfo,
-    val FASAT: NutrientInfo,
-    val FAT: NutrientInfo,
-    val FATRN: NutrientInfo,
-    val FE: NutrientInfo,
-    val FIBTG: NutrientInfo,
-    val FOLAC: NutrientInfo,
-    val FOLDFE: NutrientInfo,
-    val FOLFD: NutrientInfo,
-    val K: NutrientInfo,
-    val MG: NutrientInfo,
-    val NA: NutrientInfo,
-    val NIA: NutrientInfo,
-    val P: NutrientInfo,
-    val PROCNT: NutrientInfo,
-    val RIBF: NutrientInfo,
-    val SUGAR: NutrientInfo,
+    val NetCHOCDF: NutrientInfo?,
+    val CHOLE: NutrientInfo?,
+    val ENERC_KCAL: NutrientInfo?,
+    val FAMS: NutrientInfo?,
+    val FAPU: NutrientInfo?,
+    val FASAT: NutrientInfo?,
+    val FAT: NutrientInfo?,
+    val FATRN: NutrientInfo?,
+    val FE: NutrientInfo?,
+    val FIBTG: NutrientInfo?,
+    val FOLAC: NutrientInfo?,
+    val FOLDFE: NutrientInfo?,
+    val FOLFD: NutrientInfo?,
+    val K: NutrientInfo?,
+    val MG: NutrientInfo?,
+    val NA: NutrientInfo?,
+    val NIA: NutrientInfo?,
+    val P: NutrientInfo?,
+    val PROCNT: NutrientInfo?,
+    val RIBF: NutrientInfo?,
+    val SUGAR: NutrientInfo?,
     @Json(name = "SUGAR.added")
-    val AddedSUGAR: NutrientInfo,
+    val AddedSUGAR: NutrientInfo?,
     @Json(name = "Sugar.alcohol")
-    val AlcoholSugar: NutrientInfo,
-    val THIA: NutrientInfo,
-    val TOCPHA: NutrientInfo,
-    val VITA_RAE: NutrientInfo,
-    val VITB12: NutrientInfo,
-    val VITB6A: NutrientInfo,
-    val VITC: NutrientInfo,
-    val VITD: NutrientInfo,
-    val VITK1: NutrientInfo,
-    val WATER: NutrientInfo,
-    val ZN: NutrientInfo
+    val AlcoholSugar: NutrientInfo?,
+    val THIA: NutrientInfo?,
+    val TOCPHA: NutrientInfo?,
+    val VITA_RAE: NutrientInfo?,
+    val VITB12: NutrientInfo?,
+    val VITB6A: NutrientInfo?,
+    val VITC: NutrientInfo?,
+    val VITD: NutrientInfo?,
+    val VITK1: NutrientInfo?,
+    val WATER: NutrientInfo?,
+    val ZN: NutrientInfo?
 )
 
 @JsonClass(generateAdapter = true)
 data class Sub(
-    val daily: Double,
-    val hasRDI: Boolean,
-    val label: String,
-    val schemaOrgTag: String,
-    val tag: String,
-    val total: Double,
-    val unit: String
+    val daily: Double?,
+    val hasRDI: Boolean?,
+    val label: String?,
+    val schemaOrgTag: String?,
+    val tag: String?,
+    val total: Double?,
+    val unit: String?
 )
 
 @JsonClass(generateAdapter = true)
@@ -118,22 +124,22 @@ data class Image(
 
 @JsonClass(generateAdapter = true)
 data class Images(
-    val LARGE: Image,
-    val REGULAR: Image,
-    val SMALL: Image,
-    val THUMBNAIL: Image
+    val LARGE: Image?,
+    val REGULAR: Image?,
+    val SMALL: Image?,
+    val THUMBNAIL: Image?
 )
 
 @JsonClass(generateAdapter = true)
 data class Digest(
-    val daily: Double,
-    val hasRDI: Boolean,
-    val label: String,
-    val schemaOrgTag: String,
-    val sub: List<Sub>,
-    val tag: String,
-    val total: Double,
-    val unit: String
+    val daily: Double?,
+    val hasRDI: Boolean?,
+    val label: String?,
+    val schemaOrgTag: String?,
+    val sub: List<Sub>?,
+    val tag: String?,
+    val total: Double?,
+    val unit: String?
 )
 
 @JsonClass(generateAdapter = true)
@@ -176,9 +182,10 @@ data class NutrientInfo(
     val unit: String
 )
 
+
 @JsonClass(generateAdapter = true)
 data class RecipeSearchResult(
-    val _links: Links,
+    val _links: LinksX,
     val count: Int,
     val from: Int,
     val hits: List<Hit>,

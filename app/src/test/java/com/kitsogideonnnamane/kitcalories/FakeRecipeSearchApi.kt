@@ -1,7 +1,5 @@
 package com.kitsogideonnnamane.kitcalories
 
-import com.kitsogideonnnamane.kitcalories.data.Image
-import com.kitsogideonnnamane.kitcalories.data.Images
 import com.kitsogideonnnamane.kitcalories.data.RecipeModel
 import com.kitsogideonnnamane.kitcalories.data.Result
 import com.kitsogideonnnamane.kitcalories.data.source.Recipe
@@ -19,37 +17,16 @@ class FakeRecipeSearchApi(private val httpClient: OkHttpClient) : RecipeSearchAp
     private val recipeJsonAdapter = moshi.adapter(RecipeResult::class.java)
 
     private fun toRecipeModel(recipe: Recipe): RecipeModel {
-        val images_ = recipe.images
-        val images = listOf(
-            Images(
-                LARGE = Image(
-                    height = images_.LARGE.height,
-                    url = images_.LARGE.url,
-                    width = images_.LARGE.width
-                ),
-                REGULAR = Image(
-                    height = images_.REGULAR.height,
-                    url = images_.REGULAR.url,
-                    width = images_.REGULAR.width
-                ),
-                SMALL = Image(
-                    height = images_.SMALL.height,
-                    url = images_.SMALL.url,
-                    width = images_.SMALL.width
-                ),
-                THUMBNAIL = Image(
-                    height = images_.SMALL.height,
-                    url = images_.SMALL.url,
-                    width = images_.SMALL.width
-                ),
-            )
-        )
+        val images = recipe.images
 
         return RecipeModel(
             title = recipe.label,
             description = "fake description",
             ingredients = recipe.ingredientLines,
-            images = images,
+            thumbNailUrl = images.THUMBNAIL?.url,
+            largeImageUrl = images.LARGE?.url,
+            regularImageUrl = images.REGULAR?.url,
+            smallImageUrl = images.SMALL?.url,
             isFavorite = false,
             dietLabels = recipe.dietLabels,
             healthLabels = recipe.healthLabels,
@@ -81,9 +58,12 @@ class FakeRecipeSearchApi(private val httpClient: OkHttpClient) : RecipeSearchAp
                 title = "fake title",
                 description = "fake description",
                 ingredients = listOf("ingredient 1", "ingredient 2"),
-                images = listOf<Images>(),
                 isFavorite = false,
                 dietLabels = listOf("diet"),
+                thumbNailUrl = "thumbnailurl",
+                largeImageUrl = "largeimageurl",
+                regularImageUrl = "regularimageurl",
+                smallImageUrl = "smallimageurl",
                 healthLabels = listOf("diet"),
                 cautions = listOf("diet"),
                 mealType = listOf("diet"),

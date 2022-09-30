@@ -3,7 +3,6 @@ package com.kitsogideonnnamane.kitcalories
 import com.google.common.truth.Truth.assertThat
 import com.kitsogideonnnamane.kitcalories.data.Result
 import com.kitsogideonnnamane.kitcalories.data.source.RecipeSearchApi
-import com.kitsogideonnnamane.kitcalories.data.succeeded
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
@@ -12,25 +11,20 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
-import okio.buffer
-import okio.source
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import java.io.IOException
 
 class RecipeSearchApiTest {
     private lateinit var recipeSearchApi: RecipeSearchApi
     private lateinit var mockWebServer: MockWebServer
 
-    private fun enqueueMockResponse(fileName: String) {
-        javaClass.classLoader?.let {
-            val inputStream = it.getResourceAsStream(fileName)
-            val source = inputStream.source().buffer()
-            val mockResponse = MockResponse()
-            mockResponse.setBody(source.readString(Charsets.UTF_8))
-            mockWebServer.enqueue(mockResponse)
-        }
+    private fun readMockJsonResponse(fileName: String): String {
+        val resource = javaClass.classLoader?.getResource("success_search_response.json")
+        val file = File(resource?.path!!)
+        return file.readText(Charsets.UTF_8)
     }
 
     @Before
@@ -39,11 +33,11 @@ class RecipeSearchApiTest {
         val dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 if (request.path?.contains("/search")!!) {
-                    return MockResponse().setBody("search")
+                    return MockResponse().setBody(readMockJsonResponse("success_search_response.json"))
                 } else if (request.path?.contains("/recipe")!!) {
-                    return MockResponse().setBody("recipe")
+                    return MockResponse().setBody(readMockJsonResponse("success_recipe_response.json"))
                 }
-                return MockResponse().setResponseCode(404).setBody("404")
+                return MockResponse().setResponseCode(404).setBody("fail_recipe_response.json")
             }
         }
         mockWebServer.dispatcher = dispatcher
@@ -52,25 +46,27 @@ class RecipeSearchApiTest {
     }
 
     @Test
+    fun testTestResources() {
+        val resource = javaClass.classLoader?.getResource("success_search_response.json")
+        val file = File(resource?.path!!)
+        assertThat(file.exists()).isTrue()
+        assertThat(file.readLines().size).isGreaterThan(10)
+    }
+
+    @Test
     fun test_recipeSearchApi_serverOnline() {
         val client = OkHttpClient()
-        val request = Request.Builder()
-            .url("http://localhost:9090/search")
-            .build()
+        val request = Request.Builder().url("http://localhost:9090/404").build()
 
         client.newCall(request).execute().use { res ->
-            if (!res.isSuccessful) throw IOException("Unexpected code $res")
-
-            assertThat(res.code).isEqualTo(200)
-            assertThat(res.body!!.string()).isEqualTo("search")
+            assertThat(res.isSuccessful).isFalse()
+            assertThat(res.code).isEqualTo(404)
         }
     }
 
     @ExperimentalCoroutinesApi
     @Test
     fun search_recipes() = runTest {
-        enqueueMockResponse("success_search_response.json")
-
         val searchString = "rice"
         val response = recipeSearchApi.searchRecipes(searchString)
         response as Result.Success
